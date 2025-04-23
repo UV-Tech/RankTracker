@@ -1,0 +1,152 @@
+.keyword-form-container {
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.keyword-form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.keyword-form-header h2 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.domain-context {
+  background: var(--secondary-color);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.domain-label {
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.domain-name {
+  font-weight: 500;
+  color: var(--primary-color);
+  margin-right: 0.5rem;
+}
+
+.domain-url {
+  color: var(--light-text);
+  font-size: 0.9rem;
+}
+
+.keyword-form {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.form-group input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.form-group textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 16px;
+  font-family: inherit;
+  resize: vertical;
+}
+
+.form-help {
+  font-size: 12px;
+  color: #666;
+  margin-top: 5px;
+  display: block;
+}
+
+.mode-toggle {
+  display: flex;
+  margin-bottom: 20px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid #ddd;
+  width: fit-content;
+}
+
+.mode-btn {
+  padding: 10px 15px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  background-color: #f5f5f5;
+  border-right: 1px solid #ddd;
+}
+
+.mode-btn:last-child {
+  border-right: none;
+}
+
+.mode-btn.active {
+  background-color: #4caf50;
+  color: white;
+}
+
+.form-actions {
+  display: flex;
+  margin-top: 30px;
+}
+
+@media (max-width: 768px) {
+  .keyword-form-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .keyword-form-header h2 {
+    margin-bottom: 1rem;
+  }
+  
+  .back-btn {
+    margin-left: 0;
+  }
+  
+  .domain-context {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .domain-label,
+  .domain-name,
+  .domain-url {
+    margin-bottom: 0.25rem;
+  }
+  
+  .keyword-form {
+    padding: 1.5rem;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .form-actions button,
+  .form-actions a {
+    width: 100%;
+    margin: 0.5rem 0;
+    text-align: center;
+  }
+  
+  .form-actions .cancel-btn {
+    margin-left: 0;
+  }
+} 

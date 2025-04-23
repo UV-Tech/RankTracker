@@ -1,0 +1,504 @@
+.keyword-list-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.keyword-list-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  align-items: center;
+}
+
+.keyword-domain-info {
+  flex: 1;
+  min-width: 300px;
+}
+
+.keyword-domain-info h2 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1.75rem;
+}
+
+.domain-url {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.keyword-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.keyword-filter {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+
+.keyword-filter label {
+  margin-right: 1rem;
+  font-weight: 500;
+}
+
+.keyword-filter select {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  min-width: 150px;
+  font-size: 14px;
+}
+
+.keywords-table-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.keywords-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.keywords-table th,
+.keywords-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+}
+
+.keywords-table th {
+  background-color: var(--secondary-color);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.keywords-table tr:last-child td {
+  border-bottom: none;
+}
+
+.keywords-table tr:hover {
+  background-color: #f9f9ff;
+}
+
+.rank-value {
+  font-weight: 600;
+}
+
+.rank-value.not-found {
+  color: var(--light-text);
+}
+
+.rank-up {
+  color: var(--success-color);
+  margin-left: 0.5rem;
+  font-weight: bold;
+}
+
+.rank-down {
+  color: var(--danger-color);
+  margin-left: 0.5rem;
+  font-weight: bold;
+}
+
+.rank-same {
+  color: var(--warning-color);
+  margin-left: 0.5rem;
+  font-weight: bold;
+}
+
+.keyword-row-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.no-keywords {
+  text-align: center;
+  padding: 3rem 2rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.no-keywords p {
+  font-size: 1.1rem;
+  margin-bottom: 1.5rem;
+  color: var(--light-text);
+}
+
+.add-first-keyword-btn {
+  display: inline-block;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: background-color 0.3s, transform 0.1s;
+}
+
+.add-first-keyword-btn:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+@media (max-width: 1024px) {
+  .keywords-table {
+    min-width: 800px;
+  }
+  
+  .keywords-table-container {
+    overflow-x: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .keyword-list-header {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0 1rem;
+  }
+  
+  .keyword-domain-info {
+    margin-bottom: 1rem;
+    width: 100%;
+  }
+  
+  .keyword-actions {
+    width: 100%;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  
+  /* Convert table to card view on mobile */
+  .keywords-table-container {
+    border-radius: 8px;
+    overflow: visible;
+    box-shadow: none;
+  }
+  
+  .keywords-table {
+    min-width: auto;
+  }
+  
+  .keywords-table thead {
+    display: none; /* Hide table header on mobile */
+  }
+  
+  .keywords-table, 
+  .keywords-table tbody, 
+  .keywords-table tr, 
+  .keywords-table td {
+    display: block;
+    width: 100%;
+    text-align: left;
+  }
+  
+  .keywords-table tr {
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+    background-color: white;
+  }
+  
+  .keywords-table td {
+    display: flex;
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+    position: relative;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .keywords-table td::before {
+    content: attr(data-label);
+    width: 120px;
+    font-weight: 600;
+    display: inline-block;
+    color: var(--primary-color);
+  }
+  
+  .keywords-table td[data-label="Actions"] {
+    display: flex;
+    padding: 10px 15px;
+  }
+  
+  .keywords-table td[data-label="Actions"]::before {
+    content: attr(data-label);
+    width: 120px;
+    font-weight: 600;
+    display: inline-block;
+    color: var(--primary-color);
+  }
+
+  .keyword-row-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 2px;
+    padding: 0;
+    width: calc(100% - 120px);
+  }
+  
+  .check-rank-btn,
+  .edit-keyword-btn,
+  .delete-keyword-btn {
+    min-width: 0;
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    height: 32px;
+    margin: 0;
+    font-size: 16px;
+    border-radius: 4px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  .keyword-filter {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .keyword-filter label {
+    margin-bottom: 8px;
+    margin-right: 0;
+  }
+  
+  .keyword-filter select {
+    width: 100%;
+  }
+}
+
+/* Common button styles */
+.add-keyword-btn,
+.check-all-btn,
+.export-btn,
+.back-btn,
+.check-rank-btn,
+.edit-keyword-btn,
+.delete-keyword-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 140px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  text-align: center;
+  border: none;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background-color 0.2s, transform 0.1s;
+  white-space: nowrap;
+}
+
+.add-keyword-btn {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.add-keyword-btn:hover {
+  background-color: var(--primary-hover);
+}
+
+.check-all-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.check-all-btn:hover {
+  background-color: #45a049;
+}
+
+.check-all-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.export-btn {
+  background-color: #2196F3;
+  color: white;
+}
+
+.export-btn:hover {
+  background-color: #0b7dda;
+}
+
+.export-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.back-btn {
+  background-color: #607d8b;
+  color: white;
+}
+
+.back-btn:hover {
+  background-color: #546e7a;
+}
+
+.check-rank-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.check-rank-btn:hover {
+  background-color: #45a049;
+}
+
+.check-rank-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.edit-keyword-btn {
+  background-color: #ff9800;
+  color: white;
+}
+
+.edit-keyword-btn:hover {
+  background-color: #e68a00;
+}
+
+.delete-keyword-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.delete-keyword-btn:hover {
+  background-color: #d32f2f;
+}
+
+/* Common button hover effects */
+.add-keyword-btn:hover,
+.check-all-btn:hover,
+.export-btn:hover,
+.back-btn:hover,
+.check-rank-btn:hover,
+.edit-keyword-btn:hover,
+.delete-keyword-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.add-keyword-btn:active,
+.check-all-btn:active,
+.export-btn:active,
+.back-btn:active,
+.check-rank-btn:active,
+.edit-keyword-btn:active,
+.delete-keyword-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Export dropdown styling */
+.export-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.export-options {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  z-index: 10;
+  min-width: 180px;
+  margin-top: 8px;
+  border: 1px solid #eaeaea;
+  overflow: hidden;
+}
+
+.export-options button {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 16px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s;
+}
+
+.export-options button:last-child {
+  border-bottom: none;
+}
+
+.export-options button:hover {
+  background-color: #f5f5f5;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .keyword-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .add-keyword-btn,
+  .check-all-btn,
+  .export-btn,
+  .back-btn {
+    width: calc(50% - 4px);
+    margin: 0;
+  }
+}
+
+/* Modern icon buttons - desktop view */
+.check-rank-btn,
+.edit-keyword-btn,
+.delete-keyword-btn {
+  min-width: 36px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin: 0 4px;
+}
+
+/* Button colors */
+.check-rank-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.edit-keyword-btn {
+  background-color: #ff9800; 
+  color: white;
+}
+
+.delete-keyword-btn {
+  background-color: #f44336;
+  color: white;
+}
