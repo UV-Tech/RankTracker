@@ -359,20 +359,30 @@ const getGoogleRank = async (domain, keyword) => {
         
         logger.info(`Checked ${allItems.length} organic results, domain not found in organic results`);
         
-        // If domain was found in ads but not in organic results, return the ad position
+        // If domain was found in ads but not in organic results, return the ad position and the list of URLs
+        const urlList = allItems.map((item, idx) => `${idx + 1}. ${item.link || ''}`);
         if (adPosition !== -1) {
             logger.info(`Domain only found in ads at position ${adPosition + 1}`);
-            return `Ad: ${adPosition + 1}`;
+            return {
+                rank: `Ad: ${adPosition + 1}`,
+                urls: urlList
+            };
         }
         
         if (allItems.length === 0) {
             logger.error('No organic results returned from API for keyword: ' + keyword);
-            return 'No results found'; // Return a more user-friendly message instead of throwing error
+            return {
+                rank: 'No results found',
+                urls: []
+            };
         }
         
         // If we get here, the domain wasn't found in any of the results
         logger.info('Domain not found in first 100 results or ads');
-        return 'Not found in top 100';
+        return {
+            rank: 'Not found in top 100',
+            urls: urlList
+        };
     } catch (error) {
         logger.error('Detailed error in getGoogleRank', error);
         throw new Error(`Failed to fetch Google rankings: ${error.message}`);
