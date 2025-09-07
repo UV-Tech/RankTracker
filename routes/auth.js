@@ -132,8 +132,10 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 // @access  Public
 router.get('/google/callback', 
     passport.authenticate('google', { 
-        // Use frontend URL for failure redirect
-        failureRedirect: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=google_failed`
+        // Use appropriate URL for failure redirect
+        failureRedirect: process.env.NODE_ENV === 'production' 
+            ? '/login?error=google_failed'
+            : `${process.env.FRONTEND_URL || 'http://localhost:3000'}/login?error=google_failed`
     }),
     (req, res) => {
         // Successful authentication
@@ -143,12 +145,14 @@ router.get('/google/callback',
             sessionID: req.sessionID
         });
         
-        // Get frontend URL from environment or use default
-        const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+        // Get appropriate redirect URL
+        const redirectUrl = process.env.NODE_ENV === 'production' 
+            ? '/' // In production, redirect to root since frontend and backend are on same domain
+            : process.env.FRONTEND_URL || 'http://localhost:3000'; // In development, redirect to frontend URL
         
         // Redirect to the frontend application
-        console.log(`[AUTH] Redirecting to frontend: ${frontendUrl}`);
-        res.redirect(frontendUrl);
+        console.log(`[AUTH] Redirecting to: ${redirectUrl}`);
+        res.redirect(redirectUrl);
     }
 );
 
@@ -171,11 +175,13 @@ router.get('/logout', (req, res, next) => {
             // Clear the cookie
             res.clearCookie('connect.sid');
             
-            // Get frontend URL from environment or use default
-            const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+            // Get appropriate redirect URL
+            const redirectUrl = process.env.NODE_ENV === 'production' 
+                ? '/login' // In production, redirect to /login since frontend and backend are on same domain
+                : `${process.env.FRONTEND_URL || 'http://localhost:3000'}/login`; // In development, redirect to frontend URL
             
             // Redirect to the frontend login page
-            res.redirect(`${frontendUrl}/login`);
+            res.redirect(redirectUrl);
         });
     });
 });
