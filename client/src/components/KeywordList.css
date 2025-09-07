@@ -85,6 +85,21 @@
   white-space: nowrap;
 }
 
+.keywords-table th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s;
+}
+
+.keywords-table th.sortable:hover {
+  background-color: #e8e8ff;
+}
+
+.keywords-table th.sorted-asc,
+.keywords-table th.sorted-desc {
+  background-color: #e0e0ff;
+}
+
 .keywords-table tr:last-child td {
   border-bottom: none;
 }

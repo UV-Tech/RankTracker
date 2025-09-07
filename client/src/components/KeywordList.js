@@ -14,6 +14,7 @@ function KeywordList() {
   const [checkingAll, setCheckingAll] = useState(false);
   const [selectedGroup, setSelectedGroup] = useState('All');
   const [showExportOptions, setShowExportOptions] = useState(false);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: null });
 
   useEffect(() => {
     fetchDomainAndKeywords();
@@ -239,9 +240,69 @@ function KeywordList() {
     setShowExportOptions(false);
   };
 
+  const handleSort = (key) => {
+    let direction = 'asc';
+    if (sortConfig.key === key && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key, direction });
+  };
+
+  const getSortedKeywords = (keywordsToSort) => {
+    if (!sortConfig.key) return keywordsToSort;
+
+    return [...keywordsToSort].sort((a, b) => {
+      let aValue, bValue;
+
+      switch (sortConfig.key) {
+        case 'keyword':
+          aValue = a.keyword.toLowerCase();
+          bValue = b.keyword.toLowerCase();
+          break;
+        case 'group':
+          aValue = (a.group || 'Default').toLowerCase();
+          bValue = (b.group || 'Default').toLowerCase();
+          break;
+        case 'currentRank':
+          if (a.currentRank === 'Not found in top 100' || !a.currentRank) {
+            aValue = 999;
+          } else if (a.currentRank === 'Not checked yet') {
+            aValue = 1000;
+          } else {
+            aValue = parseInt(a.currentRank);
+          }
+          
+          if (b.currentRank === 'Not found in top 100' || !b.currentRank) {
+            bValue = 999;
+          } else if (b.currentRank === 'Not checked yet') {
+            bValue = 1000;
+          } else {
+            bValue = parseInt(b.currentRank);
+          }
+          break;
+        case 'lastChecked':
+          aValue = a.lastChecked ? new Date(a.lastChecked) : new Date(0);
+          bValue = b.lastChecked ? new Date(b.lastChecked) : new Date(0);
+          break;
+        default:
+          return 0;
+      }
+
+      if (aValue < bValue) {
+        return sortConfig.direction === 'asc' ? -1 : 1;
+      }
+      if (aValue > bValue) {
+        return sortConfig.direction === 'asc' ? 1 : -1;
+      }
+      return 0;
+    });
+  };
+
   const filteredKeywords = selectedGroup === 'All' 
     ? keywords 
     : keywords.filter(kw => kw.group === selectedGroup);
+
+  const sortedAndFilteredKeywords = getSortedKeywords(filteredKeywords);
 
   return (
     <div className="keyword-list-container">
@@ -324,15 +385,35 @@ function KeywordList() {
                 <table className="keywords-table">
                   <thead>
                     <tr>
-                      <th>Keyword</th>
-                      <th>Group</th>
-                      <th>Current Rank</th>
-                      <th>Last Checked</th>
+                      <th 
+                        onClick={() => handleSort('keyword')} 
+                        className={`sortable ${sortConfig.key === 'keyword' ? `sorted-${sortConfig.direction}` : ''}`}
+                      >
+                        Keyword {sortConfig.key === 'keyword' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                      </th>
+                      <th 
+                        onClick={() => handleSort('group')} 
+                        className={`sortable ${sortConfig.key === 'group' ? `sorted-${sortConfig.direction}` : ''}`}
+                      >
+                        Group {sortConfig.key === 'group' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                      </th>
+                      <th 
+                        onClick={() => handleSort('currentRank')} 
+                        className={`sortable ${sortConfig.key === 'currentRank' ? `sorted-${sortConfig.direction}` : ''}`}
+                      >
+                        Current Rank {sortConfig.key === 'currentRank' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                      </th>
+                      <th 
+                        onClick={() => handleSort('lastChecked')} 
+                        className={`sortable ${sortConfig.key === 'lastChecked' ? `sorted-${sortConfig.direction}` : ''}`}
+                      >
+                        Last Checked {sortConfig.key === 'lastChecked' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                      </th>
                       <th>Actions</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredKeywords.map(keyword => (
+                    {sortedAndFilteredKeywords.map(keyword => (
                       <tr key={keyword._id}>
                         <td data-label="Keyword">{keyword.keyword}</td>
                         <td data-label="Group">{keyword.group || 'Default'}</td>
