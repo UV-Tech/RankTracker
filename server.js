@@ -6,6 +6,11 @@ const mongoose = require('mongoose');
 const session = require('express-session');
 const passport = require('passport');
 const cookieParser = require('cookie-parser');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
+const MongoStore = require('connect-mongo');
+const validator = require('validator');
+const { body, validationResult } = require('express-validator');
 const { getGoogleRank } = require('./services/searchService');
 
 // Import models
@@ -25,6 +30,57 @@ require('./config/passport');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Security Middleware
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com"],
+            imgSrc: ["'self'", "data:", "https:"],
+            scriptSrc: ["'self'"],
+        },
+    },
+    crossOriginEmbedderPolicy: false
+}));
+
+// Rate limiting
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 100, // limit each IP to 100 requests per windowMs
+    message: 'Too many requests from this IP, please try again later.',
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+// Apply rate limiting to all requests
+app.use(limiter);
+
+// Stricter rate limiting for API routes
+const apiLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 50, // limit each IP to 50 API requests per windowMs
+    message: 'Too many API requests from this IP, please try again later.',
+});
+
+// Apply API rate limiting to all routes starting with /api, /auth, /keywords, /domains
+app.use('/api', apiLimiter);
+app.use('/auth', apiLimiter);
+app.use('/keywords', apiLimiter);
+app.use('/domains', apiLimiter);
+
+// Input validation middleware
+const handleValidationErrors = (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        return res.status(400).json({
+            error: 'Validation failed',
+            details: errors.array()
+        });
+    }
+    next();
+};
+
 // Middleware
 app.use(cors({
     origin: 'http://localhost:3000', // React app URL
@@ -37,16 +93,23 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 
-// Session middleware
+// Session middleware with secure store
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'keyboard cat',
-    resave: true,
-    saveUninitialized: true,
+    secret: process.env.SESSION_SECRET, // Remove fallback for security
+    resave: false, // Don't save session if unmodified
+    saveUninitialized: false, // Don't create session until something stored
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URI,
+        touchAfter: 24 * 3600, // lazy session update
+        crypto: {
+            secret: process.env.SESSION_SECRET
+        }
+    }),
     cookie: {
-        secure: false, // Must be false in dev environment for non-HTTPS
+        secure: process.env.NODE_ENV === 'production', // HTTPS only in production
         maxAge: 24 * 60 * 60 * 1000, // 1 day
         httpOnly: true,
-        sameSite: 'lax', // Changed from 'none' to 'lax' for better compatibility
+        sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax',
         path: '/'
     }
 }));
@@ -124,32 +187,67 @@ app.get('/api/domains/:id', ensureAuth, async (req, res) => {
 });
 
 // Create domain
-app.post('/api/domains', ensureAuth, async (req, res) => {
-    try {
-        const { name, url } = req.body;
-        
-        if (!name || !url) {
-            return res.status(400).json({ error: 'Name and URL are required' });
-        }
-        
-        const normalizedUrl = url.toLowerCase()
-            .replace(/^https?:\/\//, '')
-            .replace(/^www\./, '')
-            .trim();
+app.post('/api/domains', 
+    ensureAuth,
+    [
+        body('name')
+            .trim()
+            .isLength({ min: 1, max: 100 })
+            .withMessage('Domain name must be between 1 and 100 characters')
+            .matches(/^[a-zA-Z0-9\s\-_.]+$/)
+            .withMessage('Domain name contains invalid characters'),
+        body('url')
+            .trim()
+            .isLength({ min: 1, max: 255 })
+            .withMessage('URL must be between 1 and 255 characters')
+            .custom((value) => {
+                // Normalize URL for validation
+                const normalized = value.toLowerCase()
+                    .replace(/^https?:\/\//, '')
+                    .replace(/^www\./, '')
+                    .trim();
+                
+                // Validate domain format
+                if (!validator.isFQDN(normalized) && !validator.isIP(normalized)) {
+                    throw new Error('Invalid domain format');
+                }
+                return true;
+            })
+    ],
+    handleValidationErrors,
+    async (req, res) => {
+        try {
+            const { name, url } = req.body;
             
-        const domain = new Domain({
-            name,
-            url: normalizedUrl,
-            user: req.user._id
-        });
-        
-        await domain.save();
-        res.status(201).json(domain);
-    } catch (error) {
-        console.error('Error creating domain:', error);
-        res.status(500).json({ error: 'Failed to create domain' });
+            const normalizedUrl = url.toLowerCase()
+                .replace(/^https?:\/\//, '')
+                .replace(/^www\./, '')
+                .trim();
+                
+            // Check if domain already exists for this user
+            const existingDomain = await Domain.findOne({ 
+                url: normalizedUrl, 
+                user: req.user._id 
+            });
+            
+            if (existingDomain) {
+                return res.status(400).json({ error: 'Domain already exists' });
+            }
+                
+            const domain = new Domain({
+                name: validator.escape(name), // Sanitize input
+                url: normalizedUrl,
+                user: req.user._id
+            });
+            
+            await domain.save();
+            res.status(201).json(domain);
+        } catch (error) {
+            console.error('Error creating domain:', error);
+            res.status(500).json({ error: 'Failed to create domain' });
+        }
     }
-});
+);
 
 // Update domain
 app.put('/api/domains/:id', ensureAuth, async (req, res) => {
