@@ -30,6 +30,28 @@ require('./config/passport');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Health check endpoint (before all middleware)
+app.get('/health', (req, res) => {
+    res.json({ 
+        status: 'OK', 
+        timestamp: new Date().toISOString(),
+        env: process.env.NODE_ENV,
+        hasSessionSecret: !!process.env.SESSION_SECRET,
+        hasMongoUri: !!process.env.MONGODB_URI
+    });
+});
+
+// Environment validation
+if (!process.env.SESSION_SECRET) {
+    console.error('FATAL ERROR: SESSION_SECRET is not defined.');
+    process.exit(1);
+}
+
+if (!process.env.MONGODB_URI) {
+    console.error('FATAL ERROR: MONGODB_URI is not defined.');
+    process.exit(1);
+}
+
 // Security Middleware
 app.use(helmet({
     contentSecurityPolicy: {
