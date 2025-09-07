@@ -126,8 +126,10 @@ function Login() {
   };
 
   const handleGoogleLogin = () => {
-    // Specify the complete backend URL to ensure it's hitting the right endpoint
-    const backendUrl = 'http://localhost:5000';
+    // Use the current domain for production or localhost for development
+    const backendUrl = process.env.NODE_ENV === 'production' 
+      ? window.location.origin  // Use the current domain in production
+      : 'http://localhost:5000'; // Use localhost in development
     const googleAuthUrl = `${backendUrl}/auth/google`;
     console.log('Redirecting to Google login:', googleAuthUrl);
     window.location.href = googleAuthUrl;
