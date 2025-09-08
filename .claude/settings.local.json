@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git fetch:*)",
+      "Bash(git push:*)",
+      "Bash(git checkout:*)",
+      "Bash(git pull:*)",
+      "Bash(git merge:*)",
+      "Bash(vercel:*)",
+      "Bash(npm install:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git rm:*)",
+      "Bash(npm run build:*)",
+      "WebFetch(domain:rank-tracker-3yqqxjxqm-uv-tech1s-projects.vercel.app)",
+      "WebFetch(domain:rank-tracker-ccm1bujea-uv-tech1s-projects.vercel.app)",
+      "WebFetch(domain:rank-tracker-12wufecz1-uv-tech1s-projects.vercel.app)",
+      "WebFetch(domain:rank-tracker-dkymbkor1-uv-tech1s-projects.vercel.app)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

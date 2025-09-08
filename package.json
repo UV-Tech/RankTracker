@@ -2,10 +2,10 @@
     "name": "ranktracker",
     "version": "1.0.0",
     "description": "A web application to check Google search rankings for keywords",
-    "main": "server.js",
+    "main": "index.js",
     "scripts": {
-        "start": "node server.js",
-        "dev": "nodemon server.js",
+        "start": "node index.js",
+        "dev": "nodemon index.js",
         "client": "cd client && npm start",
         "dev:full": "concurrently \"npm run dev\" \"npm run client\"",
         "build": "cd client && npm install && npm run build",
