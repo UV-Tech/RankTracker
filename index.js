@@ -24,8 +24,8 @@ const authRoutes = require('./routes/auth');
 // Import authentication middleware
 const { ensureAuth } = require('./middleware/auth');
 
-// Initialize passport config
-require('./config/passport');
+// Initialize passport config (temporarily disabled)
+// require('./config/passport');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
