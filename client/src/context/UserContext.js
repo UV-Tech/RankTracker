@@ -26,6 +26,7 @@ export const UserProvider = ({ children }) => {
     
     // Then fetch latest user data from API
     fetchUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Function to fetch current user data
@@ -87,7 +88,7 @@ export const UserProvider = ({ children }) => {
   const logout = async () => {
     try {
       // Use the POST endpoint instead of GET for more reliable logout
-      const response = await axios.post('/auth/logout');
+      await axios.post('/auth/logout');
       
       // Clear user state
       setUser(null);

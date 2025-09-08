@@ -23,6 +23,7 @@ function KeywordForm() {
     } else if (domainId) {
       fetchDomain();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, domainId]);
 
   const fetchKeyword = async () => {
@@ -106,9 +107,6 @@ function KeywordForm() {
     }
   };
 
-  const toggleMode = () => {
-    setIsBulkMode(!isBulkMode);
-  };
 
   return (
     <div className="keyword-form-container">

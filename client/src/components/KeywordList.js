@@ -18,6 +18,7 @@ function KeywordList() {
 
   useEffect(() => {
     fetchDomainAndKeywords();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [domainId]);
 
   const fetchDomainAndKeywords = async () => {

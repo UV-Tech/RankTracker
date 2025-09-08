@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import './DomainForm.css';
@@ -14,13 +14,7 @@ function DomainForm() {
   const [error, setError] = useState(null);
   const isEditMode = !!id;
 
-  useEffect(() => {
-    if (isEditMode) {
-      fetchDomain();
-    }
-  }, [id]);
-
-  const fetchDomain = async () => {
+  const fetchDomain = useCallback(async () => {
     try {
       setLoading(true);
       const response = await axios.get(`/api/domains/${id}`);
@@ -35,7 +29,13 @@ function DomainForm() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    if (isEditMode) {
+      fetchDomain();
+    }
+  }, [isEditMode, fetchDomain]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
