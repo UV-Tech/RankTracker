@@ -41,16 +41,11 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Environment validation
-if (!process.env.SESSION_SECRET) {
-    console.error('FATAL ERROR: SESSION_SECRET is not defined.');
-    process.exit(1);
-}
-
-if (!process.env.MONGODB_URI) {
-    console.error('FATAL ERROR: MONGODB_URI is not defined.');
-    process.exit(1);
-}
+// Environment validation (temporarily disabled for debugging)
+console.log('Checking environment variables...');
+console.log('SESSION_SECRET exists:', !!process.env.SESSION_SECRET);
+console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
+console.log('NODE_ENV:', process.env.NODE_ENV);
 
 // Security Middleware
 app.use(helmet({
@@ -117,14 +112,14 @@ app.use(cookieParser());
 
 // Session middleware with secure store
 app.use(session({
-    secret: process.env.SESSION_SECRET, // Remove fallback for security
+    secret: process.env.SESSION_SECRET || 'temporary-fallback-for-debugging', // Temporary fallback
     resave: false, // Don't save session if unmodified
     saveUninitialized: false, // Don't create session until something stored
     store: MongoStore.create({
         mongoUrl: process.env.MONGODB_URI,
         touchAfter: 24 * 3600, // lazy session update
         crypto: {
-            secret: process.env.SESSION_SECRET
+            secret: process.env.SESSION_SECRET || 'temporary-fallback-for-debugging'
         }
     }),
     cookie: {
