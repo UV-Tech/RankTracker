@@ -30,6 +30,11 @@ require('./config/passport');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Ultra simple endpoint
+app.get('/', (req, res) => {
+    res.send('Hello from RankTracker!');
+});
+
 // Health check endpoint (before all middleware)
 app.get('/health', (req, res) => {
     console.log('Health check accessed');
