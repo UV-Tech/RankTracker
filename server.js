@@ -32,6 +32,7 @@ const PORT = process.env.PORT || 5000;
 
 // Health check endpoint (before all middleware)
 app.get('/health', (req, res) => {
+    console.log('Health check accessed');
     res.json({ 
         status: 'OK', 
         timestamp: new Date().toISOString(),
@@ -41,50 +42,20 @@ app.get('/health', (req, res) => {
     });
 });
 
+// Simple test endpoint
+app.get('/test', (req, res) => {
+    console.log('Test endpoint accessed');
+    res.send('Server is working!');
+});
+
 // Environment validation (temporarily disabled for debugging)
 console.log('Checking environment variables...');
 console.log('SESSION_SECRET exists:', !!process.env.SESSION_SECRET);
 console.log('MONGODB_URI exists:', !!process.env.MONGODB_URI);
 console.log('NODE_ENV:', process.env.NODE_ENV);
 
-// Security Middleware
-app.use(helmet({
-    contentSecurityPolicy: {
-        directives: {
-            defaultSrc: ["'self'"],
-            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-            fontSrc: ["'self'", "https://fonts.gstatic.com"],
-            imgSrc: ["'self'", "data:", "https:"],
-            scriptSrc: ["'self'"],
-        },
-    },
-    crossOriginEmbedderPolicy: false
-}));
-
-// Rate limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-    message: 'Too many requests from this IP, please try again later.',
-    standardHeaders: true,
-    legacyHeaders: false,
-});
-
-// Apply rate limiting to all requests
-app.use(limiter);
-
-// Stricter rate limiting for API routes
-const apiLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 50, // limit each IP to 50 API requests per windowMs
-    message: 'Too many API requests from this IP, please try again later.',
-});
-
-// Apply API rate limiting to all routes starting with /api, /auth, /keywords, /domains
-app.use('/api', apiLimiter);
-app.use('/auth', apiLimiter);
-app.use('/keywords', apiLimiter);
-app.use('/domains', apiLimiter);
+// Security Middleware (temporarily disabled for debugging)
+console.log('Skipping security middleware for debugging...');
 
 // Input validation middleware
 const handleValidationErrors = (req, res, next) => {
